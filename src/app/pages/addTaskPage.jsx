@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import validateTaskFields from "../utils/validator";
+import validateTaskFields from "../utils/validators/taskCreationValidator";
 import { useHistory } from "react-router-dom";
 import { useTasks } from "../hooks/useTasks";
 import { nanoid } from "nanoid";

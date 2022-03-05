@@ -3,7 +3,7 @@ import LoginForm from "../forms/loginForm";
 import RegisterForm from "../forms/registerForm";
 
 const SignInSignUp = () => {
-    const marker = false;
+    const marker = true;
     if (marker) {
         return <LoginForm />;
     } else {

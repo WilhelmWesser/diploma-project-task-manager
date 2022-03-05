@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import validateTaskFields from "../utils/validator";
+import validateTaskFields from "../utils/validators/taskCreationValidator";
 import { useTasks } from "../hooks/useTasks";
 
 const EditTaskPage = () => {
