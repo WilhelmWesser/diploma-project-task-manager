@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { validatorChooser } from "../utils/validators/validatorChooser";
-import { nanoid } from "nanoid";
 import { privacyPolicyValidator } from "../utils/validators/privacyPolicyValidator";
+import { useAuth } from "../hooks/useAuth";
+import { useHistory } from "react-router-dom";
 
 const RegisterForm = () => {
-    // const [disabled, setDisabled] = useState(true);
+    const history = useHistory();
+    const { signUp } = useAuth();
     const [userData, setUserData] = useState({
-        _id: nanoid(),
         name: "",
         email: "",
         password: ""
@@ -15,7 +16,8 @@ const RegisterForm = () => {
         name: validatorChooser("name", userData.name),
         email: validatorChooser("email", userData.email),
         password: validatorChooser("password", userData.password),
-        privacyPolicy: privacyPolicyValidator("")
+        privacyPolicy: privacyPolicyValidator(""),
+        regErr: ""
     });
     const [disabled, setDisabled] = useState(
         errors.name !== "" ||
@@ -50,16 +52,33 @@ const RegisterForm = () => {
         }));
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        delete userData.privacyPolicy;
-        console.log(userData);
+        const toSend = userData;
+        delete toSend.privacyPolicy;
+        console.log(toSend);
+        try {
+            setErrors((prevState) => ({
+                ...prevState,
+                regErr: ""
+            }));
+            await signUp(toSend);
+            history.push("/");
+        } catch (error) {
+            setErrors((prevState) => ({
+                ...prevState,
+                regErr: error.email
+            }));
+        }
     };
 
     return (
         <div className="d-flex flex-column justify-content-center bg-dark">
             <div className="d-flex justify-content-center">
-                <form className="d-flex flex-column justify-content-center text-warning mt-5">
+                <form
+                    className="d-flex flex-column justify-content-center text-warning mt-5"
+                    onSubmit={handleSubmit}
+                >
                     <h1 className="mb-5 mt-3">Registration form</h1>
                     <div className="form-group mt-2">
                         <label className="text-info">{errors.name}</label>
@@ -72,7 +91,12 @@ const RegisterForm = () => {
                             onChange={handleChange}
                         />
                     </div>
-                    <div className="form-group mt-3">
+                    <div className="form-group mt-1">
+                        <div>
+                            <label className="text-dark bg-info rounded">
+                                {errors.regErr}
+                            </label>
+                        </div>
                         <label className="text-info">{errors.email}</label>
                         <input
                             type="email"
@@ -109,7 +133,7 @@ const RegisterForm = () => {
                                 Accept{" "}
                                 <a
                                     href="/"
-                                    className="text-info"
+                                    className="text-success"
                                     style={{ textDecoration: "none" }}
                                 >
                                     licence terms
@@ -121,12 +145,21 @@ const RegisterForm = () => {
                         type="submit"
                         className={`btn ${
                             disabled ? "bg-secondary" : "btn-outline-warning"
-                        } mt-5 mb-5`}
+                        } mt-5 mb-3`}
                         disabled={disabled}
-                        onSubmit={handleSubmit}
                     >
                         Sign up
                     </button>
+                    <h5 className="text-center text-light mb-5">
+                        Do you already have an account?{" "}
+                        <a
+                            href="/login/signIn"
+                            className="text-success"
+                            style={{ textDecoration: "none" }}
+                        >
+                            Sign In
+                        </a>
+                    </h5>
                 </form>
             </div>
         </div>

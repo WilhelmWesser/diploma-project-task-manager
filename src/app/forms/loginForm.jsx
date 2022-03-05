@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../hooks/useAuth";
 import { validatorChooser } from "../utils/validators/validatorChooser";
+import { useHistory } from "react-router-dom";
 
 const LoginForm = () => {
+    const history = useHistory();
+    const { signIn } = useAuth();
     const [userLogInData, setUserLogInData] = useState({
         email: "",
-        password: ""
+        password: "",
+        regEmailError: "",
+        regPasswordError: ""
     });
     const [errors, setErrors] = useState({
         email: validatorChooser("email", userLogInData.email),
@@ -36,17 +42,39 @@ const LoginForm = () => {
         }));
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log(userLogInData);
+        try {
+            setErrors((prevState) => ({
+                ...prevState,
+                regEmailError: "",
+                regPasswordError: ""
+            }));
+            await signIn(userLogInData);
+            history.push("/");
+        } catch (error) {
+            setErrors((prevState) => ({
+                ...prevState,
+                regEmailError: error.email,
+                regPasswordError: error.password
+            }));
+        }
     };
 
     return (
         <div className="d-flex flex-column justify-content-center bg-dark">
             <div className="d-flex flex-row justify-content-center">
-                <form className="d-flex flex-column text-warning">
+                <form
+                    className="d-flex flex-column text-warning"
+                    onSubmit={handleSubmit}
+                >
                     <h1 className="text-center text-info">Get into system</h1>
                     <div className="form-group mt-3">
+                        <div>
+                            <label className="text-dark bg-info rounded">
+                                {errors.regEmailError}
+                            </label>
+                        </div>
                         <label className="text-info">{errors.email}</label>
                         <input
                             type="email"
@@ -57,6 +85,11 @@ const LoginForm = () => {
                         />
                     </div>
                     <div className="form-group mt-3">
+                        <div>
+                            <label className="text-dark bg-info rounded">
+                                {errors.regPasswordError}
+                            </label>
+                        </div>
                         <label className="text-info">{errors.password}</label>
                         <input
                             type="password"
@@ -72,10 +105,19 @@ const LoginForm = () => {
                             disabled ? "bg-secondary" : "btn-outline-warning"
                         } mt-5 mb-5`}
                         disabled={disabled}
-                        onSubmit={handleSubmit}
                     >
                         Sign in
                     </button>
+                    <h5 className="text-center text-light mb-5">
+                        Do not have an account?{" "}
+                        <a
+                            href="/login/signUp"
+                            className="text-success"
+                            style={{ textDecoration: "none" }}
+                        >
+                            Sign Up
+                        </a>
+                    </h5>
                 </form>
             </div>
         </div>

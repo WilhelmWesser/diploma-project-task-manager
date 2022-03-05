@@ -1,10 +1,11 @@
 import React from "react";
 import LoginForm from "../forms/loginForm";
 import RegisterForm from "../forms/registerForm";
+import { useParams } from "react-router-dom";
 
 const SignInSignUp = () => {
-    const marker = true;
-    if (marker) {
+    const { type } = useParams();
+    if (type === "signIn") {
         return <LoginForm />;
     } else {
         return <RegisterForm />;

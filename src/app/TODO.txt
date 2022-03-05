@@ -1,0 +1,2 @@
+1. In task.jsx replace getting task info from props with getting info with request(in hook)
+2. Add user edit page

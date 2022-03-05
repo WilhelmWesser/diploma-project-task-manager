@@ -15,13 +15,6 @@ export const TasksProvider = ({ children }) => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (error !== null) {
-            toast(error);
-            setError(null);
-        }
-    }, [error]);
-
-    useEffect(() => {
         getTasks();
     }, []);
 
@@ -29,6 +22,13 @@ export const TasksProvider = ({ children }) => {
         const { message } = error.response.data;
         setError(message);
     }
+
+    useEffect(() => {
+        if (error !== null) {
+            toast(error);
+            setError(null);
+        }
+    }, [error]);
 
     function getTaskById(id) {
         return tasks.find((task) => task._id === id);
