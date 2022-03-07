@@ -17,7 +17,7 @@ const HeaderProfile = () => {
                 <Link className="dropdown-item" to="/myProfile">
                     Profile
                 </Link>
-                <Link to="logout" className="dropdown-item">
+                <Link to="/logout" className="dropdown-item">
                     Log out
                 </Link>
             </div>

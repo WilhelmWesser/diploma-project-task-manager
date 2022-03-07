@@ -10,10 +10,6 @@ const TasksList = ({ userTasks, type, onDelete }) => {
                     key={task._id}
                     _id={task._id}
                     color={task.color}
-                    responsible={task.responsible}
-                    heading={task.heading}
-                    terms={task.terms}
-                    content={task.content}
                     onDelete={onDelete}
                 />
             );

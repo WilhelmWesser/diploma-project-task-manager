@@ -2,8 +2,13 @@ import httpService from "./http.service";
 const taskEndpoint = "task/";
 
 const taskService = {
-    fetchAll: async () => {
-        const { data } = await httpService.get(taskEndpoint);
+    fetchAll: async (pageId) => {
+        const { data } = await httpService.get(taskEndpoint, {
+            params: {
+                orderBy: '"pageId"',
+                equalTo: `"${pageId}"`
+            }
+        });
         return data;
     },
     getById: async (id) => {

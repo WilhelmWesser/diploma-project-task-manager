@@ -25,11 +25,10 @@ const AuthProvider = ({ children }) => {
     const [currentUser, setUser] = useState();
     const [isLoading, setLoading] = useState(true);
     const history = useHistory();
-
     function logOut() {
         localStorageService.removeAuthData();
         setUser(null);
-        history.push("/");
+        history.replace("/");
     }
 
     async function signUp({ email, password, ...rest }) {

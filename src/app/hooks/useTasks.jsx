@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import taskService from "../services/task.service";
 import { toast } from "react-toastify";
+import { useAuth } from "./useAuth";
 
 const TasksContext = React.createContext();
 
@@ -13,7 +14,7 @@ export const TasksProvider = ({ children }) => {
     const [tasks, setTasks] = useState();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    const { currentUser } = useAuth();
     useEffect(() => {
         getTasks();
     }, []);
@@ -36,9 +37,11 @@ export const TasksProvider = ({ children }) => {
 
     async function getTasks() {
         try {
-            const { content } = await taskService.fetchAll();
-            setTasks(content);
-            setIsLoading(false);
+            if (currentUser) {
+                const { content } = await taskService.fetchAll(currentUser._id);
+                setTasks(content);
+                setIsLoading(false);
+            }
         } catch (error) {
             const { message } = error.response.data;
             errorCatcher(message);

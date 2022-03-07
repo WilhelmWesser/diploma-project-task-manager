@@ -1,9 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import TasksList from "../reusableComponents/combinedElements/tasksList";
 import { useHistory } from "react-router-dom";
 import { useTasks } from "../hooks/useTasks";
-import { useAuth } from "../hooks/useAuth";
-
 const MyTasks = () => {
     const history = useHistory();
     const cardTypes = [
@@ -23,9 +21,11 @@ const MyTasks = () => {
             text: "Finished tasks"
         }
     ];
+    const { tasks, setTasks, getTasks, deleteTask } = useTasks();
 
-    const { tasks, setTasks, deleteTask } = useTasks();
-    const { currentUser } = useAuth();
+    useEffect(() => {
+        getTasks();
+    }, []);
 
     const handleSubmit = () => {
         history.push("/createTask");
@@ -66,25 +66,33 @@ const MyTasks = () => {
         return (
             <div className="d-flex flex-column justify-content-around">
                 <div className="d-flex justify-content-center">
-                    <select
-                        className="custom-select text-center text-warning bg-dark w-25 mt-3"
-                        defaultValue="urgent"
-                        onChange={handleSelectSwitch}
-                    >
-                        <option disabled>Task importance filter</option>
-                        <option value="urgent" className="text-danger">
-                            Urgent
-                        </option>
-                        <option value="for 1-3 days" className="text-primary">
-                            For 1-3 days
-                        </option>
-                        <option
-                            value="for a long time"
-                            className="text-success"
+                    <div className="d-flex flex-column justify-content-center  mt-3">
+                        <h6 className="text-center text-warning bg-dark rounded">
+                            Filter by urgency
+                        </h6>
+                        <select
+                            className="custom-select text-center text-warning bg-dark rounded"
+                            defaultValue="urgent"
+                            onChange={handleSelectSwitch}
                         >
-                            For a long time
-                        </option>
-                    </select>
+                            <option disabled>Task importance filter</option>
+                            <option value="urgent" className="text-danger">
+                                Urgent
+                            </option>
+                            <option
+                                value="for 1-3 days"
+                                className="text-primary"
+                            >
+                                For 1-3 days
+                            </option>
+                            <option
+                                value="for a long time"
+                                className="text-success"
+                            >
+                                For a long time
+                            </option>
+                        </select>
+                    </div>
                 </div>
                 <div className="d-flex flex-row justify-content-around m-5">
                     {cardTypes.map((type) => (
@@ -100,9 +108,7 @@ const MyTasks = () => {
                                 </div>
                             </div>
                             <TasksList
-                                userTasks={tasks.filter(
-                                    (task) => task.pageId === currentUser._id
-                                )}
+                                userTasks={tasks}
                                 type={type.type}
                                 onDelete={handleTaskDeletion}
                             />
