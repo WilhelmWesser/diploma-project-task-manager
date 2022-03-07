@@ -2,6 +2,7 @@ import React from "react";
 import TasksList from "../reusableComponents/combinedElements/tasksList";
 import { useHistory } from "react-router-dom";
 import { useTasks } from "../hooks/useTasks";
+import { useAuth } from "../hooks/useAuth";
 
 const MyTasks = () => {
     const history = useHistory();
@@ -24,6 +25,7 @@ const MyTasks = () => {
     ];
 
     const { tasks, setTasks, deleteTask } = useTasks();
+    const { currentUser } = useAuth();
 
     const handleSubmit = () => {
         history.push("/createTask");
@@ -98,7 +100,9 @@ const MyTasks = () => {
                                 </div>
                             </div>
                             <TasksList
-                                userTasks={tasks}
+                                userTasks={tasks.filter(
+                                    (task) => task.pageId === currentUser._id
+                                )}
                                 type={type.type}
                                 onDelete={handleTaskDeletion}
                             />

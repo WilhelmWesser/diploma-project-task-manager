@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
-
+import { useTasks } from "../../hooks/useTasks";
 // TODO
 //
 // get task content on pageload
@@ -10,19 +10,13 @@ import { useHistory } from "react-router-dom";
 //
 //
 //
-const Task = ({
-    _id,
-    color,
-    responsible,
-    heading,
-    terms,
-    content,
-    onDelete
-}) => {
+const Task = ({ _id, color, onDelete }) => {
     const history = useHistory();
+    const { getTaskById } = useTasks();
+    const taskToEdit = getTaskById(_id);
 
     const handleEditClick = () => {
-        history.replace(`/myTasks/edit/${_id}`);
+        history.push(`/myTasks/edit/${_id}`);
     };
 
     return (
@@ -33,13 +27,15 @@ const Task = ({
         >
             <div className="d-flex flex-row justify-content-between">
                 <div className="card-header text-center">
-                    <h6>{responsible}</h6>
+                    <h6>{taskToEdit.responsible}</h6>
                 </div>
                 <div className="d-flex">
                     <button
                         type="button"
                         className="btn btn-warning text-dark"
-                        onClick={handleEditClick}
+                        onClick={() => {
+                            handleEditClick();
+                        }}
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -85,9 +81,11 @@ const Task = ({
                 </div>
             </div>
             <div className={`card-body text-${color}`}>
-                <h5 className="card-title text-center">{heading}</h5>
-                <h6 className="card-title text-center">{content}</h6>
-                <h5 className="card-title text-center text-danger">{terms}</h5>
+                <h5 className="card-title text-center">{taskToEdit.heading}</h5>
+                <h6 className="card-title text-center">{taskToEdit.content}</h6>
+                <h5 className="card-title text-center text-danger">
+                    {taskToEdit.terms}
+                </h5>
             </div>
         </div>
     );

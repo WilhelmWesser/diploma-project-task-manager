@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { validatorChooser } from "../utils/validators/validatorChooser";
 import { useHistory } from "react-router-dom";
+import { useTasks } from "../hooks/useTasks";
 
 const LoginForm = () => {
     const history = useHistory();
+    const { getTasks } = useTasks();
     const { signIn } = useAuth();
     const [userLogInData, setUserLogInData] = useState({
         email: "",
@@ -51,7 +53,12 @@ const LoginForm = () => {
                 regPasswordError: ""
             }));
             await signIn(userLogInData);
-            history.push("/");
+            await getTasks();
+            history.push(
+                history.location.state
+                    ? history.location.state.from.pathname
+                    : "/"
+            );
         } catch (error) {
             setErrors((prevState) => ({
                 ...prevState,

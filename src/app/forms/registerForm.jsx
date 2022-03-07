@@ -3,9 +3,11 @@ import { validatorChooser } from "../utils/validators/validatorChooser";
 import { privacyPolicyValidator } from "../utils/validators/privacyPolicyValidator";
 import { useAuth } from "../hooks/useAuth";
 import { useHistory } from "react-router-dom";
+import { useTasks } from "../hooks/useTasks";
 
 const RegisterForm = () => {
     const history = useHistory();
+    const { getTasks } = useTasks();
     const { signUp } = useAuth();
     const [userData, setUserData] = useState({
         name: "",
@@ -63,7 +65,8 @@ const RegisterForm = () => {
                 regErr: ""
             }));
             await signUp(toSend);
-            history.push("/");
+            await getTasks();
+            history.push("/myTasks");
         } catch (error) {
             setErrors((prevState) => ({
                 ...prevState,

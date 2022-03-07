@@ -10,7 +10,7 @@ export const useTasks = () => {
 };
 
 export const TasksProvider = ({ children }) => {
-    const [tasks, setTasks] = useState([]);
+    const [tasks, setTasks] = useState();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -61,7 +61,7 @@ export const TasksProvider = ({ children }) => {
     const deleteTask = async (taskId) => {
         try {
             const { content } = await taskService.delete(taskId);
-            if (content.length === 0) {
+            if (!content) {
                 setTasks((prevState) =>
                     prevState.filter((task) => task._id !== taskId)
                 );
@@ -102,7 +102,8 @@ export const TasksProvider = ({ children }) => {
                 getTaskById,
                 deleteTask,
                 addTask,
-                updateTask
+                updateTask,
+                getTasks
             }}
         >
             {children}
