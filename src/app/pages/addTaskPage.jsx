@@ -3,14 +3,15 @@ import validateTaskFields from "../utils/validators/taskCreationValidator";
 import { useHistory } from "react-router-dom";
 import { useTasks } from "../hooks/useTasks";
 import { nanoid } from "nanoid";
-import { useAuth } from "../hooks/useAuth";
+import { useSelector } from "react-redux";
+import { getCurrentUserId } from "../store/user";
 
 const AddTaskPage = () => {
     const history = useHistory();
-    const { currentUser } = useAuth();
+    const currentUserId = useSelector(getCurrentUserId());
     const [data, setData] = useState({
         _id: nanoid(),
-        pageId: currentUser._id,
+        pageId: currentUserId,
         heading: "",
         status: "",
         priority: "",

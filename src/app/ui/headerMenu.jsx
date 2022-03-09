@@ -1,10 +1,11 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { getIsLoggedIn } from "../store/user";
 import HeaderProfile from "./headerProfile";
 
 const HeaderMenu = () => {
-    const { currentUser } = useAuth();
+    const isLoggedIn = useSelector(getIsLoggedIn());
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container-fluid d-flex justify-content-between">
@@ -18,7 +19,7 @@ const HeaderMenu = () => {
                             Quotes(main) page
                         </Link>
                     </li>
-                    {currentUser && (
+                    {isLoggedIn && (
                         <li className="nav-item m-2">
                             <Link
                                 className="nav-link navbar-brand"
@@ -30,7 +31,7 @@ const HeaderMenu = () => {
                     )}
                 </ul>
                 <div className="d-flex">
-                    {currentUser ? (
+                    {isLoggedIn ? (
                         <HeaderProfile />
                     ) : (
                         <Link className="nav-link" to="/login/signIn">

@@ -2,7 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import taskService from "../services/task.service";
 import { toast } from "react-toastify";
-import { useAuth } from "./useAuth";
+import { useSelector } from "react-redux";
+import { getCurrentUserId, getIsLoggedIn } from "../store/user";
 
 const TasksContext = React.createContext();
 
@@ -14,7 +15,8 @@ export const TasksProvider = ({ children }) => {
     const [tasks, setTasks] = useState();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const { currentUser } = useAuth();
+    const isLoggedIn = useSelector(getIsLoggedIn());
+    const currentUserId = useSelector(getCurrentUserId());
     useEffect(() => {
         getTasks();
     }, []);
@@ -37,8 +39,8 @@ export const TasksProvider = ({ children }) => {
 
     async function getTasks() {
         try {
-            if (currentUser) {
-                const { content } = await taskService.fetchAll(currentUser._id);
+            if (isLoggedIn) {
+                const { content } = await taskService.fetchAll(currentUserId);
                 setTasks(content);
                 setIsLoading(false);
             }

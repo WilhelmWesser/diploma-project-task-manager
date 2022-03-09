@@ -1,28 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../hooks/useAuth";
 import { validatorChooser } from "../utils/validators/validatorChooser";
-import { useHistory } from "react-router-dom";
 import { useTasks } from "../hooks/useTasks";
+import { useDispatch, useSelector } from "react-redux";
+import { getAuthErrors, signIn } from "../store/user";
+import { useHistory } from "react-router-dom";
 
 const LoginForm = () => {
     const history = useHistory();
     const { getTasks } = useTasks();
-    const { signIn } = useAuth();
+    const dispatch = useDispatch();
+    const signInError = useSelector(getAuthErrors());
     const [userLogInData, setUserLogInData] = useState({
         email: "",
-        password: "",
-        regEmailError: "",
-        regPasswordError: ""
+        password: ""
     });
     const [errors, setErrors] = useState({
         email: validatorChooser("email", userLogInData.email),
         password: validatorChooser("password", userLogInData.password)
     });
     const [disabled, setDisabled] = useState(
-        errors.name !== "" ||
-            errors.email !== "" ||
-            errors.password !== "" ||
-            errors.privacyPolicy !== ""
+        errors.email !== "" || errors.password !== ""
     );
 
     useEffect(() => {
@@ -46,25 +43,14 @@ const LoginForm = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        const redirect = history.location.state
+            ? history.location.state.from.pathname
+            : "/";
         try {
-            setErrors((prevState) => ({
-                ...prevState,
-                regEmailError: "",
-                regPasswordError: ""
-            }));
-            await signIn(userLogInData);
+            dispatch(signIn({ payload: userLogInData, redirect }));
             await getTasks();
-            history.push(
-                history.location.state
-                    ? history.location.state.from.pathname
-                    : "/"
-            );
         } catch (error) {
-            setErrors((prevState) => ({
-                ...prevState,
-                regEmailError: error.email,
-                regPasswordError: error.password
-            }));
+            console.log(error.message);
         }
     };
 
@@ -77,11 +63,6 @@ const LoginForm = () => {
                 >
                     <h1 className="text-center text-info">Get into system</h1>
                     <div className="form-group mt-3">
-                        <div>
-                            <label className="text-dark bg-info rounded">
-                                {errors.regEmailError}
-                            </label>
-                        </div>
                         <label className="text-info">{errors.email}</label>
                         <input
                             type="email"
@@ -92,11 +73,6 @@ const LoginForm = () => {
                         />
                     </div>
                     <div className="form-group mt-3">
-                        <div>
-                            <label className="text-dark bg-info rounded">
-                                {errors.regPasswordError}
-                            </label>
-                        </div>
                         <label className="text-info">{errors.password}</label>
                         <input
                             type="password"
@@ -106,11 +82,16 @@ const LoginForm = () => {
                             onChange={handleChange}
                         />
                     </div>
+                    <div>
+                        <label className="text-dark bg-info rounded mt-2">
+                            {signInError}
+                        </label>
+                    </div>
                     <button
                         type="submit"
                         className={`btn ${
                             disabled ? "bg-secondary" : "btn-outline-warning"
-                        } mt-5 mb-5`}
+                        } mt-3 mb-5`}
                         disabled={disabled}
                     >
                         Sign in

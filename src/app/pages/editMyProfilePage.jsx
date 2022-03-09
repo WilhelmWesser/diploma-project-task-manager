@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { validatorChooser } from "../utils/validators/validatorChooser";
 import { useHistory } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useDispatch, useSelector } from "react-redux";
+import { getCurrentUserData, updateUser } from "../store/user";
 const EditMyProfilePage = () => {
     const history = useHistory();
-    const { updateUser, currentUser } = useAuth();
-
+    const dispatch = useDispatch();
+    const currentUser = useSelector(getCurrentUserData());
     const [userData, setUserData] = useState({
         _id: currentUser._id,
         name: currentUser.name,
@@ -41,15 +42,10 @@ const EditMyProfilePage = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            setErrors((prevState) => ({
-                ...prevState
-            }));
-            await updateUser(userData);
+            dispatch(updateUser(userData));
             history.replace("/myProfile");
         } catch (error) {
-            setErrors((prevState) => ({
-                ...prevState
-            }));
+            console.log(error.message);
         }
     };
 

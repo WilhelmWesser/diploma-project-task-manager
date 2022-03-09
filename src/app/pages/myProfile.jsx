@@ -1,8 +1,9 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { getCurrentUserData } from "../store/user";
 const MyProfile = () => {
-    const { currentUser } = useAuth();
+    const currentUser = useSelector(getCurrentUserData());
     const history = useHistory();
 
     const editButtonClick = () => {

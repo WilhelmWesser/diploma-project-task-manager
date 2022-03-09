@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { validatorChooser } from "../utils/validators/validatorChooser";
 import { privacyPolicyValidator } from "../utils/validators/privacyPolicyValidator";
-import { useAuth } from "../hooks/useAuth";
-import { useHistory } from "react-router-dom";
 import { useTasks } from "../hooks/useTasks";
+import { useDispatch, useSelector } from "react-redux";
+import { getAuthErrors, signUp } from "../store/user";
 
 const RegisterForm = () => {
-    const history = useHistory();
+    const dispatch = useDispatch();
+    const signUpError = useSelector(getAuthErrors());
     const { getTasks } = useTasks();
-    const { signUp } = useAuth();
     const [userData, setUserData] = useState({
         name: "",
         email: "",
@@ -18,8 +18,7 @@ const RegisterForm = () => {
         name: validatorChooser("name", userData.name),
         email: validatorChooser("email", userData.email),
         password: validatorChooser("password", userData.password),
-        privacyPolicy: privacyPolicyValidator(""),
-        regErr: ""
+        privacyPolicy: privacyPolicyValidator("")
     });
     const [disabled, setDisabled] = useState(
         errors.name !== "" ||
@@ -56,22 +55,11 @@ const RegisterForm = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const toSend = userData;
-        delete toSend.privacyPolicy;
-        console.log(toSend);
         try {
-            setErrors((prevState) => ({
-                ...prevState,
-                regErr: ""
-            }));
-            await signUp(toSend);
+            dispatch(signUp(userData));
             await getTasks();
-            history.push("/myTasks");
         } catch (error) {
-            setErrors((prevState) => ({
-                ...prevState,
-                regErr: error.email
-            }));
+            console.log(error.message);
         }
     };
 
@@ -95,11 +83,6 @@ const RegisterForm = () => {
                         />
                     </div>
                     <div className="form-group mt-1">
-                        <div>
-                            <label className="text-dark bg-info rounded">
-                                {errors.regErr}
-                            </label>
-                        </div>
                         <label className="text-info">{errors.email}</label>
                         <input
                             type="email"
@@ -144,11 +127,16 @@ const RegisterForm = () => {
                             </label>
                         </div>
                     </div>
+                    <div>
+                        <label className="text-dark bg-info rounded mt-2">
+                            {signUpError}
+                        </label>
+                    </div>
                     <button
                         type="submit"
                         className={`btn ${
                             disabled ? "bg-secondary" : "btn-outline-warning"
-                        } mt-5 mb-3`}
+                        } mt-3 mb-3`}
                         disabled={disabled}
                     >
                         Sign up

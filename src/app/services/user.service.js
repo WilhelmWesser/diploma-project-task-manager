@@ -15,7 +15,6 @@ const userService = {
             userEndPoint + localStorageService.getUserId(),
             updateData
         );
-        console.log(data);
         return data;
     },
     getCurrentUser: async () => {

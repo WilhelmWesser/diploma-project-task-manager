@@ -7,17 +7,17 @@ import HeaderMenu from "./ui/headerMenu";
 import EditTaskPage from "./pages/editTaskPage";
 import AddTaskPage from "./pages/addTaskPage";
 import { TasksProvider } from "./hooks/useTasks";
-import AuthProvider from "./hooks/useAuth";
 import { ToastContainer } from "react-toastify";
 import MyProfile from "./pages/myProfile";
 import ProtectedRoute from "./reusableComponents/singleElements/protectedRoutes";
 import LogOut from "./layouts/logOut";
 import EditMyProfilePage from "./pages/editMyProfilePage";
+import AuthLoader from "./hoc/authLoader";
 
 function App() {
     return (
         <div>
-            <AuthProvider>
+            <AuthLoader>
                 <HeaderMenu />
                 <TasksProvider>
                     <Switch>
@@ -44,7 +44,7 @@ function App() {
                         <Redirect to="/" />
                     </Switch>
                 </TasksProvider>
-            </AuthProvider>
+            </AuthLoader>
             <ToastContainer />
         </div>
     );
